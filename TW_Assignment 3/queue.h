@@ -16,7 +16,7 @@ class Queue {
 
 
         void push(const Item_Type item); //Pushes someone to the back of the line // 
-        void pop(const Item_Type item); //Pops an element from the front of the line //
+        void pop(); //Pops the element from the front of the line //
         Item_Type front() const; //Returns whoever is in the front of the line //
         size_t size() const; //
         bool empty() const; //
@@ -24,7 +24,7 @@ class Queue {
         void display();
 
     private:
-        LinkedList<typename Item_Type> queue;
+        LinkedList<typename Item_Type> queue; //We're building a queue fundamentally based on a linked list, so the heart of the data will be stored in a linked list class identical to the one created for our last project. For more info, view linked_list.h
         
 };
 
@@ -32,7 +32,7 @@ class Queue {
 template<typename Item_Type>
 Queue<Item_Type>::Queue() {
 
-
+    //Both the constructor and the destructor below will be left purposefully blank, because the linked list class already has a built in destructor that'll handle clearing out all the elements in the list. We'll leave this here for the sake of safety.
 
 }
 
@@ -48,7 +48,7 @@ Queue<Item_Type>::~Queue() {
 template<typename Item_Type>
 bool Queue<Item_Type>::empty() const {
 
-
+    return (size() == 0);
 
 }
 
@@ -56,15 +56,15 @@ bool Queue<Item_Type>::empty() const {
 template<typename Item_Type>
 void Queue<Item_Type>::push(const Item_Type item) {
 
-
+    queue.push_back(item); 
 
 }
 
-//Pops an item from the "front" of the queue
+//Pops the item from the "front" of the queue
 template<typename Item_Type>
-void Queue<Item_Type>::pop(const Item_Type item) {
+void Queue<Item_Type>::pop() {
 
-
+    queue.pop_front();
 
 }
 
@@ -72,7 +72,7 @@ void Queue<Item_Type>::pop(const Item_Type item) {
 template<typename Item_Type>
 Item_Type Queue<Item_Type>::front() const {
 
-
+    return queue.front();
 
 }
 
@@ -80,7 +80,7 @@ Item_Type Queue<Item_Type>::front() const {
 template<typename Item_Type>
 size_t Queue<Item_Type>::size() const {
 
-
+    return queue.num_items;
 
 }
 
@@ -88,7 +88,9 @@ size_t Queue<Item_Type>::size() const {
 template<typename Item_Type>
 void Queue<Item_Type>::move_to_rear() {
 
-
+    Item_Type item = front();
+    push(item);
+    pop();
 
 }
 
@@ -96,7 +98,8 @@ void Queue<Item_Type>::move_to_rear() {
 template<typename Item_Type>
 void Queue<Item_Type>::display() {
 
-
+    queue.print();
+    cout << endl;
 
 }
 

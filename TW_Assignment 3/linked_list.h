@@ -31,14 +31,16 @@ public:
     Item_Type back() const;
     bool empty() const;
     void insert(size_t index, const Item_Type& item);
+    void insertion_sort();
     bool remove(size_t index);
     size_t find(const Item_Type& item) const;
     void print();
+    int num_items;            // Number of items in the list. This is different from the original implementation, making the number of items public so that we can access it for our queue.
 
 private:
     Node<Item_Type>* head;    // Pointer to the head of the list
     Node<Item_Type>* tail;    // Pointer to the tail of the list
-    int num_items;            // Number of items in the list
+    
 };
 
 // Constructor
@@ -173,7 +175,6 @@ Item_Type LinkedList<Item_Type>::back() const {
     return tail->data;
 }
 
-//nsert item at position index (starting at 0).Insert at the end if index is beyond the end of the lis
 // Insert a new item at the given index. If the given index is beyond the end of the list, it should just insert it at the end with push_back, instead.
 template<typename Item_Type>
 void LinkedList<Item_Type>::insert(size_t index, const Item_Type& item) {
@@ -286,9 +287,68 @@ void LinkedList<Item_Type>::print() {
     Node<Item_Type>* current = head;
 
     while (current != nullptr) {
-        cout << current->data << endl;
+        cout << current->data << " "; //Modified from 
         current = current->next;
     }
+}
+
+template <typename Item_Type>
+void LinkedList<Item_Type>::insertion_sort() {
+    
+    //Immediately, we're gonna wanna check that we're not trying to sort an empty linked list. If so, return. 
+    if (empty()) {
+        return;
+    }
+
+    //If not, it's game time.
+    ////Current starts off pointing at the NEXT element, because Insertion Sort begins by assuming that the first one's already sorted.
+    Node<Item_Type>* current = head->next;
+    Node<Item_Type>* current_prev = head;
+
+    while (current != nullptr) //Current's gonna iterate through the entire linked list.
+    {
+
+        //Both keyNode and key are two different variables, because we need to keep both the node pointing to the value we're sorting, and that value itself.
+        Node<Item_Type>* keyNode = current;
+        Item_Type key = current->data;
+
+        //sortedCurrent is kinda like our iterator, that we'll use to iterate through the linked list and check the previous values. prev, meanwhile, lags behind it, so that we can track the value before that one. It's null in the beginning, because there's nothing before the head.
+        Node<Item_Type>* sortedCurrent = head;
+        Node<Item_Type>* prev = nullptr;
+
+        //This is where the iterative magic happens. We go through the list until we either catch up to our keyNode, OR if we find something larger than our key. If we find something larger, it's go time.
+        while (sortedCurrent != keyNode && sortedCurrent->data < key) {
+            prev = sortedCurrent;
+            sortedCurrent = sortedCurrent->next;
+        }
+
+        //Protects against the first condition of the while loop, so we know for sure when it's go time.
+        if (sortedCurrent != keyNode) {
+
+            //Remove keyNode from its current position.
+            current_prev->next = keyNode->next;
+
+            //Now, keyNode needs to go BEFORE sortedCurrent, because right now, sortedCurrent is the first value that's larger than our key, in this iteration.
+            if (prev == nullptr) {
+                //If we're putting keyNode at the beginning, in case the first value was larger, and we've found the smallest number so far.
+                keyNode->next = head;
+                head = keyNode;
+            }
+            else { //It goes in the middle. Put it between the previous number and sortedCurrent.
+                keyNode->next = sortedCurrent;
+                prev->next = keyNode;
+            }
+        }
+        else {
+            current_prev = keyNode;
+        }
+
+        //Now that we've hopefully sorted or realized that we don't need to sort anymore, we'll move onto the next node.
+        current = current_prev->next;
+    }
+
+    cout << "Sorted linked list by insertion algorithm." << endl;
+    print();
 }
 
 #endif // LINKED_LIST_H
